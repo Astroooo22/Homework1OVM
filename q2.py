@@ -36,7 +36,6 @@ def bins_uniform(nbins,m,n,low,high): #creating bins to plot pdf of continuous R
         bins.append(min + bin*l)
     for r in range(1,nbins*2,2):
         x_vals.append(min+bin*r/2)
-    x_vals = (x_vals-np.mean(x_vals))/(np.std(x_vals))
     return bins,s,x_vals
 
 def uniform_xy_vals(nbins,m,n,low,high): #computing x and y values for pdf plot
@@ -50,15 +49,19 @@ def uniform_xy_vals(nbins,m,n,low,high): #computing x and y values for pdf plot
         y_valss[q] += 1
     for s in range(len(y_valss)):
         y_vals.append(y_valss[s])
+
+    x_vals = [-5,x_vals[0]]+x_vals+[x_vals[-1],5]
+    y_vals = [0,0]+y_vals+[0,0]
     return x_vals,y_vals
         
 def uniform_pdf(nbins,m,n,low,high): #plotting probability density function
     x,y = uniform_xy_vals(nbins,m,n,low,high)
     y = y/np.trapz(y,x)
+    plt.figure()
     plt.plot(x,y)
     plt.ylabel("probability density")
-    plt.xlim(-2,2)
-    plt.ylim(0,1)
+    plt.xlim(-5,5)
+    plt.ylim(0,0.6)
     plt.xlabel("x")
     plt.title("Z_n pdf estimate - "+str(m)+" samples, "+str(nbins)+" bins"+", n = "+str(n))
     plt.savefig("pdf"+str(n)+".png")
@@ -81,6 +84,8 @@ with open('DailyData - STOCK_US_XNAS_AAPL.csv', 'r') as file: #reading csv file
     for row in csv_reader:
         if row:
             close_prices.append(row[4])
+
+close_prices = close_prices[::-1] #dates are originally in descending order
 
 def price_mvt(n_days): #computing x and y for price movement graph
     x = []
@@ -172,6 +177,7 @@ with open('WeeklyData - STOCK_US_XNAS_AAPL.csv', 'r') as file: #reading csv file
     for row in csv_reader:
         if row:
             close_prices.append(row[4])
+    close_prices = close_prices[::-1] #dates are originally in descending order
 
 def price_mvt_weekly(n_weeks): #computing x and y for price movement graph
     x = []
